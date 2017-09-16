@@ -12,17 +12,17 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0">
 	<link href="http://www.swisstopo.admin.ch/internet/swisstopo.ConfigFavicon.ico" type="image/x-icon" rel="Shortcut Icon">
 
-	<title>SwissGuesser</title>
-	<meta name="description" content="StoryMaps: Data Stories is a showcase of web maps on interesting themes, with information, learning, entertainment and inspiring stories linked to the use of geodata at the center of interest"/>
+	<title>OpenGuesser</title>
+	<meta name="description" content=""/>
 	<!-- Facebook tags -->
-	<meta property="og:site_name" content="geo.admin.ch storymaps"/>
-	<meta property="og:image" content="http://storymaps.geo.admin.ch/storymaps/storymap5/images/preview.jpg" />
-	<meta property="og:title" content="SwissGuesser: photo collection from World War I" />
-	<meta property="og:description" content="StoryMaps: Data Stories is a showcase of web maps on interesting themes, with information, learning, entertainment and inspiring stories linked to the use of geodata at the center of interest">
+	<meta property="og:site_name" content=""/>
+	<meta property="og:image" content="" />
+	<meta property="og:title" content="" />
+	<meta property="og:description" content="">
 	<!-- Google+ tags -->
-	<meta itemprop="name" content="SwissGuesser: photo collection from World War I">
-	<meta itemprop="description" content="StoryMaps: Data Stories is a showcase of web maps on interesting themes, with information, learning, entertainment and inspiring stories linked to the use of geodata at the center of interest">
-	<meta itemprop="image" content="http://storymaps.geo.admin.ch/storymaps/storymap5/images/preview.jpg">
+	<meta itemprop="name" content="">
+	<meta itemprop="description" content="">
+	<meta itemprop="image" content="">
 
 	<!-- OpenLayers 3 for GeoAdmin -->
 	<link rel="stylesheet" href="src/build/ol.css" type="text/css">
@@ -36,24 +36,13 @@
 <body>
 
 <nav id="header" class="navbar navbar-fixed-top" role="navigation"><div class="container">
-	<div class="webBlindThis">
-		Accesskeys:
-		<ul>
-		<li><a href="/" accesskey="0">Zur Startseite</a></li>
-		<li><a href="http://www.geo.admin.ch/internet/geoportal/de/tools/contact.html" accesskey="1">Zum Kontakt</a></li>
-		<li><a href="http://www.geo.admin.ch/internet/geoportal/de/tools/sitemap.html" accesskey="2">Zur Übersicht</a></li>
-		<li><a href="http://www.geo.admin.ch/internet/geoportal/de/tools/what_where.html" accesskey="3">Zur Suche</a></li>
-		</ul>
-	</div>
 	<div class="navbar-header logo">
-		<h1 class="navbar-brand" href="#" data-i18n="App-Title" style="display:none">SwissGuesser</h1>
+		<h1 class="navbar-brand" href="#" data-i18n="App-Title">OpenGuesser</h1>
 
 		<div id="webHeaderDiv">
 			<!--UdmComment-->
 			<div id="webHeaderLinks">
-			<div id="adminch"><a href="http://www.admin.ch/" data-i18n="Head-CH">Bundesverwaltung admin.ch</a></div>
-			<div id="depart"><a href="http://www.edi.admin.ch/" data-i18n="Head-EDI">Eidg. Departement des Innern</a></div>
-			<a href="http://www.bar.admin.ch/" data-i18n="Head-BAR">Schweizerisches Bundesarchiv</a>
+				<p><a href="http://make.opendata.ch/wiki/project:openguesser">A #GLAMhack</a></p>
 			</div>
 			<!--/UdmComment-->
 		</div>
@@ -70,7 +59,7 @@
 	</div>
 	<div class="navServiceBackground">
 	<ul class="inline-list">
-		<li><b>Share:</b></li>
+		<!-- <li><b>Share:</b></li>
 		<li><a href="http://www.facebook.com/sharer.php?u=http%3a%2f%2fstorymaps.geo.admin.ch/storymaps/storymap5/" title="Facebook"><img src="images/social/facebook.gif" alt="Facebook" width="13" height="13"></a></li>
 		<li><a href="http://twitter.com/intent/tweet?url=http%3a%2f%2fstorymaps.geo.admin.ch/storymaps/storymap5" title="Twitter"><img src="images/social/twitter.gif" alt="Facebook" width="13" height="13"></a></li>
 		<li><a href="http://google.com/bookmarks/mark?op=edit&amp;bkmk=http%3a%2f%2fstorymaps.geo.admin.ch/storymaps/storymap5" title="Google Bookmarks"><img src="images/social/google.gif" alt="Google Bookmarks" width="13" height="13"></a></li>
@@ -82,14 +71,14 @@
 	    <li class="pipe">&nbsp;</li>
 	    <li><a tabindex="-1" href="?lang=it">Italiano</a></li>
 	    <li class="pipe">&nbsp;</li>
-		<li><a tabindex="-1" href="?lang=en">English</a></li>
+		<li><a tabindex="-1" href="?lang=en">English</a></li> -->
 	</ul>
 	</div>
 	<div class="collapse navbar-collapse" id="navbar-main"><ul class="nav navbar-nav pull-right">
 		<li>
 			<a href="#" data-target="#d-start" data-toggle="modal" data-i18n="App-About">About</a>
 		</li>
-		<li class="dropdown" id="language">
+		<!-- <li class="dropdown" id="language">
 			<a class="dropdown-toggle" data-toggle="dropdown" href="#"><span data-i18n="App-Lang">Language</span> <span class="caret"></span></a>
 			<ul class="dropdown-menu" aria-labelledby="language">
 			    <li><a tabindex="-1" href="?lang=de" lang="de">Deutsch</a></li>
@@ -105,7 +94,7 @@
 				<li><a href="http://twitter.com/intent/tweet?url=http%3a%2f%2fstorymaps.geo.admin.ch/storymaps/storymap5" tabindex="-1"><img class="icon" src="images/social/twitter_big.png" width="64" height="64"> Twitter</a></li>
 				<li><a href="https://plus.google.com/share?url=http%3a%2f%2fstorymaps.geo.admin.ch/storymaps/storymap5" tabindex="-1"><img class="icon" src="images/social/googleplus_big.png" width="64" height="64"> Google+</a></li>
 			</ul>
-		</li>
+		</li> -->
 	</ul></div>
 </div></nav>
 

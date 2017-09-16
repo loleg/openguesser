@@ -1,6 +1,6 @@
-@import "../bower_components/bootstrap/less/bootstrap.less";
+// @import "../bower_components/bootstrap/less/bootstrap.less";
 
-@import url("http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css");
+@import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
 
 @swissred: #c33;
 @swissblue: #0081c2;
@@ -10,15 +10,15 @@ body { background: #fff; overflow: hidden; }
 
 .browsehappy {
   margin: 0px; padding: 1em;
-  background: #fcc; color: #000; 
+  background: #fcc; color: #000;
   z-index: 9000; position: fixed;
   width: 100%; bottom: 0px;
 }
 
 /* Customize container */
 
-.container-main { 
-	margin-top: 120px; 
+.container-main {
+	margin-top: 120px;
 
 	.btn-default {
 		background-color: rgba(51, 51, 51, 0.5);
@@ -34,7 +34,7 @@ body { background: #fff; overflow: hidden; }
 #row-info { background: #fff; text-align: center; z-index:1; }
 
 .navbar-toggle .icon-bar { background-color: #777; }
-.navbar-toggle { background-color: #ddd; } 
+.navbar-toggle { background-color: #ddd; }
 
 #header {
 	/* Corporate design */
@@ -47,7 +47,7 @@ body { background: #fff; overflow: hidden; }
 		line-height: 0;
 	}
 	.logo {
-		background: url('../images/logo.ch.jpeg') no-repeat top left;
+		// background: url('../images/logo.ch.jpeg') no-repeat top left;
 		min-width: 300px; min-height: 88px; width:100%;
 	}
 	.webBlindThis {
@@ -64,7 +64,7 @@ body { background: #fff; overflow: hidden; }
 		display: inline;
 	}
 	#webHeaderLinks {
-		background:url('../images/BAR_header_amt.jpg') no-repeat top right;
+		// background:url('../images/BAR_header_amt.jpg') no-repeat top right;
 		height: 100px;
 		width: 600px;
 		float: right;
@@ -144,8 +144,8 @@ body { background: #fff; overflow: hidden; }
 			border-right:1px solid black;
 			width: 4px; margin-right: 4px;
 		}
-		.spacer { 
-			cursor: default; 
+		.spacer {
+			cursor: default;
 			width: 40px;
 			height:1px;
 		}
@@ -153,28 +153,28 @@ body { background: #fff; overflow: hidden; }
 
 	/* Navigation bar */
 
-	.navbar-collapse .navbar-nav { 
+	.navbar-collapse .navbar-nav {
 		visibility: hidden;
 	}
-	.navbar-brand { 
+	.navbar-brand {
 		color: #333;
 		position: absolute;
 		font-size: 22pt;
 		font-weight: bold;
-		left: 50%; 
+		left: 50%;
 		margin-left: -5em;
 		margin-top: 1.3em;
 	}
 	.navbar-nav a { color: #333; }
-	.nav .caret { 
+	.nav .caret {
 		border-top-color: #333;
-		border-bottom-color:#333; 
+		border-bottom-color:#333;
 	}
 	.mobile-switch {
-		height: 36px; 
+		height: 36px;
 		text-align: center;
 		padding: 0;
-		
+
 		border: none;
 		background: none;
 	}
@@ -191,8 +191,8 @@ body { background: #fff; overflow: hidden; }
 
 div.overlay {
 	bottom: 0px;
-	.btn { 
-		float: right; 
+	.btn {
+		float: right;
 	}
 }
 
@@ -214,7 +214,7 @@ div.overlay {
 
 /* Map */
 body #map {
-	height: 100%; 
+	height: 100%;
 	width: 100%;
 
 	.ol-zoom {
@@ -283,10 +283,10 @@ body.modal-open, .modal-open .navbar-fixed-top {
 		border: 1px solid #ddd;
 		color: white;
 	}
-	.modal-divider { 
-		border-top:1px solid #ddd; 
-		padding-top:0.8em; 
-		margin: 0; 
+	.modal-divider {
+		border-top:1px solid #ddd;
+		padding-top:0.8em;
+		margin: 0;
 	}
 	.close { color: white; opacity: 1; }
 }
@@ -352,7 +352,7 @@ body.modal-open, .modal-open .navbar-fixed-top {
 		z-index: 90;
 		position: fixed;
 		top:1%; left:1%;
-		height: auto !important; 
+		height: auto !important;
 		width: 98% !important;
 		vertical-align: middle;
 
@@ -360,7 +360,7 @@ body.modal-open, .modal-open .navbar-fixed-top {
 	}
 
 	/* btn-guess */
-	.btn-default { 
+	.btn-default {
 		background-color: rgb(204, 204, 204);
 	    border-color: rgb(0, 0, 0);
 	    color: rgb(51, 51, 51);
@@ -385,8 +385,8 @@ body.modal-open, .modal-open .navbar-fixed-top {
 		.btn { width: 100%; }
 	}
 
-	.btn.restart { 
-		float: left; 
+	.btn.restart {
+		float: left;
 		margin-top: -0.2em;
 		margin-right: -10em;
 		font-size: 88%;
@@ -398,7 +398,7 @@ body.modal-open, .modal-open .navbar-fixed-top {
 		position: absolute;
 		font-size: 88%;
 		right: 5px;
-	}	
+	}
 
 	.panel-title, p {
 		margin-top: 3px;
@@ -433,14 +433,14 @@ body.modal-open, .modal-open .navbar-fixed-top {
 	button { padding-right: 5px; }
 }
 
-.btn-primary { 
-	background-color: @swissred; 
-	border:1px solid black; 
+.btn-primary {
+	background-color: @swissred;
+	border:1px solid black;
 	width:100%;
 }
 .btn-primary:hover {
 	background-color:#e55;
-	border:1px solid #fff;  
+	border:1px solid #fff;
 }
 .btn-primary.disabled {
 	background-color:#eee;
@@ -454,7 +454,7 @@ body.modal-open, .modal-open .navbar-fixed-top {
     position: absolute;
     left: 0;
     width: 100%;
-    max-height:75%; 
+    max-height:75%;
     overflow-y:auto;
     margin-left: 0;
     margin-bottom: 24px;
@@ -467,7 +467,7 @@ body.modal-open, .modal-open .navbar-fixed-top {
 	background: #fffff0 url('../images/map-cut.png') no-repeat top right;
 	*/
 
-	img { 
+	img {
 		float: left;
 		max-height: 5em;
 		max-width: 5em;
@@ -502,14 +502,14 @@ body.modal-open, .modal-open .navbar-fixed-top {
 
 		.message { text-align: center; }
 
-		.sharebox {	
+		.sharebox {
 			margin: 1em;
 			text-align: center;
 		}
 
 		.shareicon {
 			display: inline-block;
-			overflow-x: visible; 
+			overflow-x: visible;
 			overflow-y: visible;
 		}
 
@@ -521,17 +521,17 @@ body.modal-open, .modal-open .navbar-fixed-top {
 		button:hover { background-color: #fed; }
 
 		.shareform {
-			display: inline-block; 
+			display: inline-block;
 			height:2.2em;
-			input { 
-				position:relative; 
-				top:2px; width:10em; 
-				display: inline; 
+			input {
+				position:relative;
+				top:2px; width:10em;
+				display: inline;
 			}
-			button { 
-				padding:0.1em 0.2em 0.3em 0.3em; 
+			button {
+				padding:0.1em 0.2em 0.3em 0.3em;
 				min-width: 5em;
-				margin:0; 
+				margin:0;
 			}
 			a { text-decoration: underline; }
 		}
@@ -552,7 +552,7 @@ body.modal-open, .modal-open .navbar-fixed-top {
 }
 
 /* Tablet responsive web */
-@media screen and (min-width: 768px) and (max-width: 991px) { 
+@media screen and (min-width: 768px) and (max-width: 991px) {
 	.container-main .col-md-6 {
 		height: 50% !important;
 		overflow: hidden;
@@ -570,11 +570,11 @@ body.modal-open, .modal-open .navbar-fixed-top {
 }
 
 /* Smartphone responsive web */
-@media screen and (max-width: 767px) { 
+@media screen and (max-width: 767px) {
 
 	#header {
 		height: auto;
-		.logo { 
+		.logo {
 			background-image: url('../images/logo-small.ch.png');
 			background-position: 10px 50%;
 			background-size: auto 30px;
@@ -582,13 +582,13 @@ body.modal-open, .modal-open .navbar-fixed-top {
 			padding-left: 50px;
 		}
 		#webHeaderDiv { display: none; }
-		.navbar-brand	 { 
+		.navbar-brand	 {
 			position: relative;
-			padding: 0.5em 0 0; 
+			padding: 0.5em 0 0;
 			margin: 0;
 			left: 1%;
 		}
-		.navbar-toggle { right: -38px; } 
+		.navbar-toggle { right: -38px; }
 		.navbar-collapse {
 			.navbar-nav { visibility: visible; margin:0; background: #fff; }
 			.navbar-nav > li > a { font-weight: bold; color: @swissgrey; }
@@ -600,7 +600,7 @@ body.modal-open, .modal-open .navbar-fixed-top {
 			padding: 0;
 		}
 	}
-	#d-photobox { 
+	#d-photobox {
 		padding: 6px; height: 100%;
 		.glyphicon-fullscreen {
 			right: 23px; top: 23px;
@@ -610,7 +610,7 @@ body.modal-open, .modal-open .navbar-fixed-top {
 		margin-bottom: -5px;
 	}
 	#row-info {
-		position: fixed; bottom: 0px; left: 0px; width: 100%; 
+		position: fixed; bottom: 0px; left: 0px; width: 100%;
 	}
 	.modal-dialog { margin-top:-1em; }
 	.navServiceBackground { display: none; }
