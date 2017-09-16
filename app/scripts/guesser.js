@@ -61,8 +61,10 @@ var guesser = {
 
 		// Prepare image collection
 		self.collection = [];
-                // donloadUrl is an absolute Url pointing to where the images are
-                var baseUrl = self.config.downloadUrl || self.config.dataPrefix;
+
+		// downloadUrl is an absolute Url pointing to where the images are
+    var baseUrl = self.config.downloadUrl || self.config.dataPrefix;
+
 		$.each(json.data, function() {
 			this.src = baseUrl + this.id + self.config.dataSuffix;
 			self.collection.push(this);
@@ -493,9 +495,9 @@ var guesser = {
 	// ### Populate share box
 	share: function(permalink, histolink) {
 
-		var msg = i18n.t('Share-Message',
+		var msg = i18next.t('Share-Message',
 					{score: guesser.user.score}),
-			txt = i18n.t('Finish-Text',
+			txt = i18next.t('Finish-Text',
 					{score: '<b>' + guesser.user.score + '</b>'}),
 			shb = $('.sharebox');
 
@@ -704,7 +706,7 @@ var guesser = {
 		// Generate a comment
 		var comment = (score < 1000) ? "Result-1" :
 		              (score < 2000) ? "Result-2" : "Result-3";
-		this.domResults.find('.comment').html(i18n.t(comment));
+		this.domResults.find('.comment').html(i18next.t(comment));
 
 		// Show dialog and get ready to continue the game
 		this.domResults.removeClass('hidden');
@@ -832,23 +834,34 @@ var guesser = {
 $('#loading').removeClass('hidden');
 
 // Load translation (i18next)
-i18n.init({
+i18next.init({
 	  detectLngQS: 'lang',
 	  fallbackLng: 'en',
 	  resGetPath: 'data/locale/__lng__/__ns__.json',
 	  //useLocalStorage: true, localStorageExpirationTime: 86400000
 	}, function(t) {
-		$("*[data-i18n]").i18n();
+		$("*[data-i18n]").localize();
 		// New window all external links
 		$('a[href^="http:"]').attr('target', '_blank');
 	});
 
-$(window).load(function() {
+jqueryI18next.init(i18next, $, {
+  tName: 't', // --> appends $.t = i18next.t
+  i18nName: 'i18n', // --> appends $.i18n = i18next
+  handleName: 'localize', // --> appends $(selector).localize(opts);
+  selectorAttr: 'data-i18n', // selector for translating elements
+  targetAttr: 'i18n-target', // data-() attribute to grab target element to translate (if diffrent then itself)
+  optionsAttr: 'i18n-options', // data-() attribute that contains options, will load/set if useOptionsAttr = true
+  useOptionsAttr: false, // see optionsAttr
+  parseDefaultValueFromContent: true // parses default values from content ele.val or ele.text
+});
+
+$(window).on('load', function() {
 	geoadmin.init(); // Load the map
 
-	$.getJSON('data/base.json', function(d) {
+	$.getJSON('data/wikidata_museums_ch.json', function(d) {
 
-		var lang = i18n.detectLanguage();
+		var lang = 'en'; //i18next.detectLanguage(); --> https://github.com/i18next/i18next-browser-languageDetector
 		guesser.configure(d, lang); // Load data
 		guesser.start(); // Start the game
 
