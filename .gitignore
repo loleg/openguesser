@@ -2,6 +2,7 @@ node_modules
 dist
 docs
 .tmp
+yarn.lock
 app/bower_components
 app/fonts/
 app/styles/*.css
