@@ -1,7 +1,7 @@
 // # SwissGuesser
-// 
+//
 // (Story Map 5)
-// 
+//
 // A game to look for historical pictures on a map.
 
 // Main closure
@@ -11,18 +11,26 @@ var guesser = {
 	lang: 'DE',
 	supportedLangs: ['DE','FR','IT','EN'],
 
-	// Set up anonymous user profile
-	user: { score: 0, count: 5, collection: [] },
+	// Anonymous user profile
+	user: {
+		score: 0, 		// current score
+		count: 5, 		// how many photos per game
+                collection_size: 5,         // log10 max number of available phos
+		history: '',	// hash of previous game states
+		collection: [], // holds metadata during game
+		vectors: [], 	// holds shown vector layers
+		badges: {}		// completion badges
+	},
 
 	// State variables
-	config: null, 
-	overlay: null, 
+	config: null,
+	overlay: null,
 	overlayhtml: null,
-	collection: null, 
+	collection: null,
 	currentIndex: 0,
-	currentAnswer: null, 
+	currentAnswer: null,
 	active: false,
-	layers: [], 
+	layers: [],
 	query: {},
 
 	// DOM references
@@ -31,19 +39,19 @@ var guesser = {
 	domLocator: 	$('#d-locator'),
 	domBtnNext: 	$('#btn-continue'),
 	domBtnMobile: 	$('#btn-continue-mobile'),
-	domBtnStart: 	$('#btn-start'), 
-	domBtnClose: 	$('#btn-close'), 
-	domBtnGuess:  	$('#btn-guess'), 
+	domBtnStart: 	$('#btn-start'),
+	domBtnClose: 	$('#btn-close'),
+	domBtnGuess:  	$('#btn-guess'),
 	domBtnFinish: 	$('#btn-finish'),
 	domStartBox: 	$('#d-start'),
-	domFinishBox: 	$('#v-finish'), 
-	domPhotoBox: 	$('#d-photobox'), 
-	domLightBox: 	$('#d-lightbox'), 
+	domFinishBox: 	$('#v-finish'),
+	domPhotoBox: 	$('#d-photobox'),
+	domLightBox: 	$('#d-lightbox'),
 	domPhotoInf: 	$('#row-info'),
 
 	// Cached assets
-	assetcache:['images/1.png', 'images/2.png', 'images/3.png', 
-				'images/4.png', 'images/5.png', 'images/G.png'],
+	assetcache:['../images/1.png', '../images/2.png', '../images/3.png',
+				'../images/4.png', '../images/5.png', '../images/G.png'],
 
 	// ### Initial setup
 	configure: function(json, l) {
@@ -53,8 +61,10 @@ var guesser = {
 
 		// Prepare image collection
 		self.collection = [];
+                // donloadUrl is an absolute Url pointing to where the images are
+                var baseUrl = self.config.downloadUrl || self.config.dataPrefix;
 		$.each(json.data, function() {
-			this.src = self.config.dataPrefix + this.id + self.config.dataSuffix;
+			this.src = baseUrl + this.id + self.config.dataSuffix;
 			self.collection.push(this);
 		});
 
@@ -64,8 +74,8 @@ var guesser = {
 		if (this.supportedLangs.indexOf(l >= 0)) this.lang = l;
 
 		// Check for anchor and clear it
-		if (location.href.indexOf('#')>0) 
-			  location.href = location.href.substring(0, 
+		if (location.href.indexOf('#')>0)
+			  location.href = location.href.substring(0,
 			  	location.href.lastIndexOf('/'));
 
 		// Set up user interface
@@ -77,10 +87,10 @@ var guesser = {
 	parseQuery: function() {
 		var sSearch = window.location.search;
 		if (sSearch.length > 1) {
-			for (var aItKey, nKeyId = 0, aCouples = sSearch.substr(1).split("&"); 
+			for (var aItKey, nKeyId = 0, aCouples = sSearch.substr(1).split("&");
 					nKeyId < aCouples.length; nKeyId++) {
 				aItKey = aCouples[nKeyId].split("=");
-				this.query[unescape(aItKey[0])] = 
+				this.query[unescape(aItKey[0])] =
 					aItKey.length > 1 ? unescape(aItKey[1]) : "";
 			}
 		}
@@ -88,8 +98,13 @@ var guesser = {
 	},
 
 	is: {
-		mobile: function() { return $(window).width() <= 768; }
+		mobile: function() { return $(window).width() <= 768 && $(window).height() < 1024; }
 	},
+
+        zeroPad: function (str, max) {
+            str = str.toString();
+            return str.length < max ? this.zeroPad("0" + str, max) : str;
+         },
 
 	// ### User Interface setup
 	initLayout: function(self) {
@@ -105,8 +120,7 @@ var guesser = {
 		// Language of header links
 		$('#webHeaderLinks a').each(function() {
 			$(this).attr('href',
-				$(this).attr('href') + 
-				'?lang=' + self.lang.toLowerCase()
+				$(this).attr('href') + '?lang=' + self.lang.toLowerCase()
 			);
 		});
 
@@ -124,13 +138,19 @@ var guesser = {
 
 		// Language of copyright link
 		$('#s-copyright').each(function() {
-			$(this).attr('href', 
-				$(this).attr('href').replace('/de/', 
+			$(this).attr('href',
+				$(this).attr('href').replace('/de/',
 					'/' + self.lang.toLowerCase() + '/')); });
 
 		// Fullscreen mode
-		$('.lightbox').on('shown.bs.modal', function () {
+		self.domLightBox.on('shown.bs.modal', function () {
 			$('.modal-backdrop.in').css('opacity', 1);
+
+			// Stretch image to fill (default: width 100%)
+			if ($(window).width() < $(window).height()) {
+				$('img', this).attr('width', '')
+					.attr('height', $(window).height());
+			}
 		}).on('hidden.bs.modal', function () {
 			// Clear backdrops properly (bug?)
 			$('.modal-backdrop.in').remove();
@@ -150,11 +170,11 @@ var guesser = {
 				$(this).tooltip('hide');
 		});
 		// Show extra on-click tip when not on mobile
-		$('#row-info button:first').click(function(){ 
+		$('#row-info button:first').click(function(){
 			if (!self.is.mobile()) {
-				$('.d-photo', self.domPhotoBox).tooltip('show'); 
+				$('.d-photo', self.domPhotoBox).tooltip('show');
 				setTimeout(function() {
-					$('.d-photo', self.domPhotoBox).tooltip('hide'); 
+					$('.d-photo', self.domPhotoBox).tooltip('hide');
 				}, 3000);
 			}
 		});
@@ -163,7 +183,7 @@ var guesser = {
 		$(self.domBtnGuess).click(function(evt) {
 			$(self.overlay.getElement()).hide();
 			$(this).addClass('disabled');
-			evt.preventDefault(); 
+			evt.preventDefault();
 			self.guess();
 			return false;
 		});
@@ -181,6 +201,11 @@ var guesser = {
 		this.domBtnMobile.click(function() {
 			$(this).addClass('hidden');
 			guesser.domBtnNext.removeClass('hidden');
+			// Scroll to bottom of results box
+			setTimeout(function() {
+				guesser.domResults.animate({ scrollTop:
+					guesser.domResults[0].scrollHeight}, 1000);
+			}, 100);
 		});
 
 		// Bind switcher buttons
@@ -206,6 +231,7 @@ var guesser = {
 
 		// Show start game
 		$('#d-start').modal();
+        $('div.modal-body p').css('padding', '10px')
 	},
 
 	// ### Position the map container
@@ -216,9 +242,9 @@ var guesser = {
 		frameheight -= headheight + footheight;
 		// Adjust height to fit screen
 		$('.container-main')
-			.css('height', parseInt(frameheight - 22) + 'px');
+			.css('height', parseInt(frameheight - 25) + 'px');
 		$('.d-photo', this.domPhotoBox)
-			.css('height', parseInt(frameheight - 23) + 'px');
+			.css('height', parseInt(frameheight - 26) + 'px');
 		//this.domPhotoBox.scrollTop(this.domPhotoBox.height()*2);
 		if (map && typeof map.updateSize == 'function') map.updateSize();
 	},
@@ -242,9 +268,27 @@ var guesser = {
 		$('.total', infobox).html(this.user.score);
 
 		// Result box description
-		$('.info', this.domResults).html(metadata[this.lang]);
+        //$.support.cors = true;
+        // either a html fragment or an url
+                var msg = metadata[this.lang];
+                if (msg.indexOf('http') == 0) {
+                    $.ajax({
+                        url: msg,
+                         dataType: 'jsonp',
+                        crossDomain: true
+                    }).done(function(data) {
+                      if (metadata.copyright) {
+                        data +='<div>' +  metadata.copyright + '</div>';
+                      }
+                      $('.info p', this.domResults).html(data);
+                 });
+                } else {
+                    var decoded =  $("<div/>").html(msg).text();
+		    $('.info p', this.domResults).html(decoded);
+                }
+
 		///console.log('Loading image', metadata.id, this.lang);
-	
+
 		// Start the challenge
 		guesser.challenge(map, [metadata.y, metadata.x]);
 
@@ -265,6 +309,9 @@ var guesser = {
 		// Re-center map
 		geoadmin.reset();
 
+		// Fade all previous answers
+		this.fadeLayers(0.5);
+
 	},
 
 	// ### Get the next random image
@@ -281,6 +328,7 @@ var guesser = {
 		var r = this.collection[i];
 		// Make sure we have not already included it
 		///console.log('Picking', i, '/', l);
+
 		if (r.shown) {
 			return this.getImage(null);
 		} else {
@@ -298,18 +346,62 @@ var guesser = {
 		// Initialize image list
 		this.user.collection = [];
 
+		// Reset guess vectors
+		this.user.vectors = [];
+
+		// Load game history
+		var queryhist = this.query['history'];
+		if (queryhist && queryhist.length == (this.user.count * this.user.collection_size)) {
+			// Shared game collection
+			var gamecoll = this.collection;
+            // FIXME dynamic regex
+            var re = new RegExp(".{" + (this.user.collection.length) + "}","g");
+            var g = queryhist.match(re);
+
+			//g = queryhist.split('');
+			if (g.length < gamecoll.length) {
+				queryhist = '';
+				g.forEach(function(h) {
+					queryhist += h;
+					var ix = parseInt(h); // h.charCodeAt(0) - 97;
+					// Prevent this image from being shown again
+					if (ix != null && typeof gamecoll[ix] != 'undefined') {
+						gamecoll[ix].shown = true;
+					}
+				});
+				// History enabled
+				this.user.history = queryhist;
+				// Close starting dialogue
+				$('#d-start').modal('hide');
+			} else {
+				this.user.badges['completed'] = true;
+			}
+		}
+
 		if (this.query['game']) {
 			// Shared game collection
-			var g = this.query['game'].split('');
-			if (g.length == this.user.count) {
-				for(var i = 0; i < this.user.count; i++) {
-					var ix = g[i].charCodeAt(0) - 97;
-					this.user.collection.push(this.getImage(ix));
-				}
+			var shared = this.query['game'];
+			if (shared.length == this.user.count) { // old style hash
+                var g = s.split('');
+                if (g.length == this.user.count) {
+				    for(var i = 0; i < this.user.count; i++) {
+					    var ix = g[i].charCodeAt(0) - 97;
+					    this.user.collection.push(this.getImage(ix));
+				    }
+                }
+			} else if (shared.length == (this.user.count * this.user.collection_size)) {
+                var re = new RegExp(".{" + (this.user.collection_size) + "}","g");
+                var g = shared.match(re);
+                if (g.length == this.user.count) {
+                    for(var i = 0; i < this.user.count; i++) {
+                        var ix = parseInt(g[i]);
+                        this.user.collection.push(this.getImage(ix));
+                    }
+                }
 			} else {
 				// Restart the game
 				window.alert('Invalid game code');
-				window.location.href = window.location.origin;
+				window.location.href = window.location.protocol + '//' + window.location.hostname + window.location.pathname
 				return;
 			}
 		} else if (this.query['debug']) {
@@ -355,38 +447,55 @@ var guesser = {
 
 	// ### Game over
 	finish: function() {
-		
-		// Generate a hash
-		var permalink = document.location.href;
-		permalink += (permalink.indexOf('?') > 0) ? "&" : "?";
-		permalink += "game=";
-		for (var i = 0; i<this.user.count; i++) {
-			permalink += String.fromCharCode(
-				this.user.collection[i].ix + 97);
-		}
+
+		var self = this;
+
+		// Reset guess opacity after a few seconds
+		setTimeout(function() { self.fadeLayers(1); }, 4000);
+
+		// Get game location
+        var href = window.location.protocol + '//' + window.location.hostname + window.location.pathname;
+        var url = href.replace(/\/?(\?|#|$)/, '/$1'); // trailing slash
+
+        // Generate a hash of the current game
+	var hash = "";
+
+	for (var i = 0; i < self.user.count; i++) {
+                if (self.user.collection[i])
+                    hash += self.zeroPad(self.user.collection[i].ix, self.user.collection_size)
+                }
+
+		// Create permalink and new game link
+
+		var permalink = url + "?" + $.param({game: hash}),
+			histolink = url + "?" +   $.param({history: hash + self.user.history}) ;
+
+		// For local devs
+		if (document.location.hostname == 'localhost')
+			return self.share(permalink, histolink);
 
 		// Generate shortened URL
 		$.ajax({
-			url: "https://api.geo.admin.ch/shorten.json",
+			url: "https://api3.geo.admin.ch/shorten.json",
 			jsonp: "cb",
 			data: { "url": permalink },
 			success: function(data) {
-				guesser.share(data['shorturl']);
+				self.share(data['shorturl'], histolink);
 			},
 			error: function() {
 				// Use full link instead (e.g. local dev)
-				guesser.share(permalink);	
+				self.share(permalink, histolink);
 			}
 		});
 
 	},
 
 	// ### Populate share box
-	share: function(permalink) {
+	share: function(permalink, histolink) {
 
-		var msg = i18n.t('Share-Message', 
+		var msg = i18n.t('Share-Message',
 					{score: guesser.user.score}),
-			txt = i18n.t('Finish-Text', 
+			txt = i18n.t('Finish-Text',
 					{score: '<b>' + guesser.user.score + '</b>'}),
 			shb = $('.sharebox');
 
@@ -394,7 +503,12 @@ var guesser = {
 		var shareform = $('.shareform', shb);
 		$('input', shareform).hide().val(permalink);
 		$('input, button', shareform).click(function() {
-			$('input', shareform).fadeIn()[0].select(); // HTML5 does not yet support copy
+			var slink = $('.sharebox .shareform input').fadeIn()[0];
+			// In most browsers just do a handy select
+			if (slink) slink.select();
+			// If access to clipboard is supported
+			if (window.clipboardData)
+				window.clipboardData.setData('URL', permalink);
 		});
 		$('a', shareform).attr('href', permalink).click(function(evt) {
 			evt.preventDefault();
@@ -402,11 +516,11 @@ var guesser = {
 
 		// Populate Email share box
 		$('.btn-email', shb).click(function() {
-			location.href = 'mailto:?subject=' 
+			location.href = 'mailto:?subject='
 				+ msg + '&body=' + permalink;
 			return false;
 		});
-		
+
 		// Share link on Twitter
 		$('.btn-twitter', shb).click(function() {
 			window.open('https://twitter.com/intent/tweet?text='
@@ -426,25 +540,29 @@ var guesser = {
 		// User facing text message
 		$('.message', guesser.domFinishBox).html(txt);
 
-		// On mobile, reverse the order
+		// Navigate directly to photo/info on mobile
 		if (guesser.is.mobile()) {
-			$('.info', guesser.domResults).before(guesser.domFinishBox);
-			guesser.domBtnNext.click(); // navigate to photo/info
+			guesser.domBtnNext.click();
 		}
 
 		// UI buttons, game restart
 		guesser.domBtnNext.parent().find('button').addClass('hidden');
 		guesser.domFinishBox.removeClass('hidden');
+
+		// Set up new game link
+		guesser.domBtnFinish.attr('data-href', histolink)
+			.click(function() { location.href = $(this).attr('data-href'); });
+
 		// Pause 2 seconds before showing new game button
-		setTimeout(function() {	guesser.domBtnFinish.hide().removeClass('hidden').fadeIn(); }, 2000);
+		setTimeout(function() { guesser.domBtnFinish.hide().removeClass('hidden').fadeIn(); }, 2000);
 	},
 
-	// ### User starts making a guess 
+	// ### User starts making a guess
 	challenge: function(olMap, coordinates) {
 
 		// Save the correct answer
 		this.currentAnswer = coordinates;
-		
+
 		this.clear();
 		this.active = true;
 
@@ -452,23 +570,23 @@ var guesser = {
 		$('.btn.overlay').addClass('hidden');
 
 		// On re-init, clear map
-		if (this.overlay != null) {
-			return;
-		}
-		
+		if (this.overlay != null) { return; }
+
 		// Save overlay content and clear
 		this.overlayhtml = this.domOverlay.html();
 		this.domOverlay.html('');
 
 		// Create an Overlay
-		this.overlay =
-			new ol.Overlay({
-				element: this.domOverlay[0]
-			});
+		this.overlay = new ol.Overlay({ element: this.domOverlay[0] });
 		olMap.addOverlay(this.overlay);
 
 		// Bind click event to map
-		olMap.on('click', function(evt) { guesser.place(evt); });
+		olMap.on('singleclick', function(evt) { guesser.place(evt); });
+
+		// Prevent rotation (due to iOS vector bug)
+		map.getView().on('change:rotation', function() {
+			setTimeout(function() {	map.getView().setRotation(0); }, 100);
+		});
 
 	}, // -- challenge
 
@@ -492,24 +610,26 @@ var guesser = {
 
 		// Update placement
 		var element = $(self.overlay.getElement());
-		this.position = evt.getCoordinate();
-		///console.log(this.position);
+		this.position = evt.coordinate;
+		//console.log(this.position);
 
-		element.css('background-image',
-			"url('images/" + (self.currentIndex+1) + ".png')");
-		
+		element.css({
+			'background-image': "url('../images/" + (self.currentIndex+1) + ".png')",
+			'margin-top': "-31px"
+		});
+
 		element.popover('destroy');
 		self.overlay.setPosition(this.position);
 
 		// Show the overlay
-		element.popover({ 
+		element.popover({
 			'placement': 'top',
-			'animation': false, 
-			'html': true, 
+			'animation': false,
+			'html': true,
 			'content': this.overlayhtml
 		});
 		element.popover('show').show();
-    
+
 		// Enable link button
 		$(self.domBtnGuess).prev().addClass('hidden');
 		$(self.domBtnGuess).removeClass('hidden');
@@ -518,14 +638,10 @@ var guesser = {
 
 	// ### Submit a guess
 	guess: function() {
-		///console.log('Making guess', this.currentIndex, this.position, this.currentAnswer);
-	
+		//console.log('Making guess', this.currentIndex, this.position, this.currentAnswer);
+
 		// Deactivate guessing for this round
 		this.active = false;
-
-		// Zoom map out
-		var view = map.getView().getView2D();
-		view.setZoom(0);
 
 		// Sets up a new vector layer
 		var vectorGuess = this.getVector(
@@ -534,35 +650,42 @@ var guesser = {
 		// Add layer to the map
 		map.addLayer(vectorGuess);
 
+		// Fade previous guesses
+		this.user.vectors.forEach(function(l) { l.setOpacity(0.5); });
+		this.user.vectors.push(vectorGuess);
+
 		// Center map on guess
-		var minx = (this.position[0] < this.currentAnswer[0]) ? 
+		var minx = (this.position[0] < this.currentAnswer[0]) ?
 							this.position[0] : this.currentAnswer[0],
-			maxx = (this.position[0] >= this.currentAnswer[0]) ? 
+			maxx = (this.position[0] >= this.currentAnswer[0]) ?
 							this.position[0] : this.currentAnswer[0],
-			miny = (this.position[1] < this.currentAnswer[1]) ? 
+			miny = (this.position[1] < this.currentAnswer[1]) ?
 							this.position[1] : this.currentAnswer[1],
-			maxy = (this.position[1] >= this.currentAnswer[1]) ? 
+			maxy = (this.position[1] >= this.currentAnswer[1]) ?
 							this.position[1] : this.currentAnswer[1];
-		
+
 		// Pad the extents to try to fix the issue
 		var escale = 10000;
-		var extent = [Math.round(minx)-escale, Math.round(miny)-escale, 
+		var extent = [Math.round(minx)-escale, Math.round(miny)-escale,
 					  Math.round(maxx)+escale, Math.round(maxy)+escale];
 		///console.log('Zooming to', extent);
 
-		// Fit viewport on guess
-		// TODO: https://github.com/geoadmin/web-storymaps/issues/20
-		view.fitExtent(extent, map.getSize());
-		
-		// Workaround: center on the answer
-		view.setCenter([this.currentAnswer[0],this.currentAnswer[1]]);
-		
+		// Fly from guess to answer
+		this.startAnim(
+			/** @type {ol.Coordinate} */
+			[this.position[0], this.position[1]],
+			/** @type {ol.Coordinate} */
+			[this.currentAnswer[0], this.currentAnswer[1]],
+			/** @type {ol.Extent} */
+			extent
+		);
+
 		// Calculate distance to answer (km)
 		var dist = geoadmin.getDistanceEuclidian(
 			this.position, this.currentAnswer) / 1000;
 
 		// Calculate score
-		var score = (dist < 260) ? 
+		var score = (dist < 260) ?
 			Math.floor(-824.693 * Math.log(0.00340872 * dist) / 100.0)*100
 			: 0;
 		score = (score > 4500) ? 4500 : score;
@@ -577,7 +700,7 @@ var guesser = {
 		$('.total', this.domResults).html(this.user.score);
 		$('.distance', this.domResults).html(parseInt(dist) + " km");
 		$('.total', this.domPhotoInf).html(this.user.score);
-		
+
 		// Generate a comment
 		var comment = (score < 1000) ? "Result-1" :
 		              (score < 2000) ? "Result-2" : "Result-3";
@@ -605,112 +728,125 @@ var guesser = {
 
 	}, // -- guess
 
+	// ### Animates transitions between points
+	startAnim: function(flyFrom, flyTo, flyExtent) {
+
+		var view = map.getView();
+
+		// Fly to the answer
+		setTimeout(function() {
+			var speed = 1200;
+			var start = +new Date();
+			var pan = ol.animation.pan({
+				start: start,
+				duration: speed,
+				source: (view.getCenter())
+			});
+			var zoom = ol.animation.zoom({
+				start: start,
+				duration: speed,
+				resolution: (view.getResolution()),
+				easing: ol.easing.linear
+			});
+			map.beforeRender(pan, zoom);
+			// Fit viewport on guess and answer
+			view.fitExtent(flyExtent, map.getSize());
+			view.setResolution(view.getResolution() + 100);
+		}, 200);
+
+	}, // -- startAnim
+
+	// ### Sets the opacity of guess layers
+	fadeLayers: function(opacity) {
+		guesser.user.vectors.forEach(function(l) { l.setOpacity(opacity); });
+	},
+
 	// ### Creates vector feature for a guess
 	getVector: function(label, from, to) {
-		var imageUrl = 'images/' + label + '.png';
-		var style = new ol.style.Style({ 
-			rules: [
-				// Lines
-			  new ol.style.Rule({
-			  	filter: 'geometryType("linestring")',
-			    symbolizers: [
-			      new ol.style.Stroke({
-			        color: '#f70',
-			        width: 3,
-			        opacity: 1
-			      })
-			    ]
-			  }),
-			  // Starting point
-			  new ol.style.Rule({
-			    filter: 'geometryType("point") && which == "guess"',
-			    symbolizers: [
-			      new ol.style.Icon({
-			      	url: imageUrl,
-			      	width: 32, height: 64
-			      })
-			    ]
-			  }),
-			  // Ending point 
-			  new ol.style.Rule({
-			    filter: 'geometryType("point") && which == "answer"',
-			    symbolizers: [
-			    	new ol.style.Icon({
-			      	url: 'images/G.png',
-			      	width: 32, height: 64
-			      })
-			    /*
-			      new ol.style.Shape({
-			        size: 20,
-			        fill: new ol.style.Fill({color: '#9d9', opacity:1}),
-			        opacity: 1,
-			        stroke: new ol.style.Stroke({
-			          color: '#3f3',
-			          width: 2,
-			          opacity: 1
-			        })
-			      }) */
-			    ]
-			  })
-			] }); // -- style
-		
+		var imageUrl = '../images/' + label + '.png';
+
+        var styles = {
+            'Point': {
+                'guess': [new ol.style.Style({
+                    image: new ol.style.Icon( /** @type {olx.style.IconOptions} */ ({
+                        src: '../images/G.png'
+                    }))
+                })],
+                'answer': [
+                    new ol.style.Style({
+                        image: new ol.style.Icon( /** @type {olx.style.IconOptions} */ ({
+                            src:  imageUrl
+                        }))
+                    })
+                ]
+            },
+            'LineString': {
+                'default':
+                    [new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: '#f70',
+                            width: 3
+                        })
+                    })]
+                }
+        };
+
+        var styleFunction = function(feature, resolution) {
+            var style = feature.get('which') || 'default';
+
+            return  styles[feature.getGeometry().getType()][style];
+        };
+
+
 		var features = [
-				{
-					// Starting point (the guess)
-					type: 'Feature',
-					properties: { 
-						label: label, which: 'guess' },
-					geometry: {
-						type: 'Point', coordinates: from }
-				},{
-					// Ending point (the real answer)
-					type: 'Feature',
-					properties: {
-						label: label, which: 'answer' },
-					geometry: {
-						type: 'Point', coordinates: to }
-				},{
-					// Line from A to B
-					type: 'Feature',
-					properties: { color: '#fff' },
-					geometry: {
-						type: 'LineString', coordinates: [from, to] }
-				}
-			];
+			new ol.Feature({
+				// Starting point (the guess)
+				label: label,
+                                which: 'guess',
+                  		geometry: new ol.geom.Point(from)
+			}),
+			new ol.Feature({
+				// Ending point (the real answer)
+				label: label,
+                                which: 'answer',
+				geometry: new ol.geom.Point(to)
+			}),
+			new ol.Feature({
+				// Line from A to B
+				geometry: new ol.geom.LineString([from, to])
+			})
+		];
 
 		return new ol.layer.Vector({
-				style: style,
-				source: new ol.source.Vector({
-				 parser: new ol.parser.GeoJSON(),
-				 projection: map.getView().getProjection(),
-				 data: { type: 'FeatureCollection',
-				         features: features }
-				})
-	 		});
+                        style: styleFunction,
+			source: new ol.source.Vector({
+			 features: features
+			})
+ 		});
 	} // -- getVector
 };
 
-// Useful for iOS debugging (disable in production!)
-window.onerror = function(m,u,l) { alert(m+'\n'+u+'\n'+l); };
+///Useful for iOS debugging (disable in production!)
+///window.onerror = function(m,u,l) { alert(m+'\n'+u+'\n'+l); };
 
 $('#loading').removeClass('hidden');
 
 // Load translation (i18next)
-i18n.init({ 
-	  detectLngQS: 'lang', 
+i18n.init({
+	  detectLngQS: 'lang',
 	  fallbackLng: 'en',
 	  resGetPath: 'data/locale/__lng__/__ns__.json',
 	  //useLocalStorage: true, localStorageExpirationTime: 86400000
-	}, function(t) { 
+	}, function(t) {
 		$("*[data-i18n]").i18n();
 		// New window all external links
 		$('a[href^="http:"]').attr('target', '_blank');
 	});
 
-$(window).load(function() { 
+$(window).load(function() {
 	geoadmin.init(); // Load the map
-	
-	$.getJSON('data/base.json', function(d) { 
+
+	$.getJSON('data/base.json', function(d) {
 
 		var lang = i18n.detectLanguage();
 		guesser.configure(d, lang); // Load data
