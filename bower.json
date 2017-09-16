@@ -1,11 +1,10 @@
 {
-  "name": "storymap5",
-  "version": "0.1.0",
+  "name": "openguesser",
+  "version": "0.2.0",
   "dependencies": {
-    "bootstrap": "~3.0.0",
-    "modernizr": "~2.6.2",
-    "jquery": "~2.0.3",
-    "i18next": "~1.7.1"
+    "bootstrap": "^3.3.7",
+    "modernizr": "^3.5.0",
+    "i18next": "^9.0.0"
   },
   "devDependencies": {}
 }
