@@ -6,7 +6,7 @@ App-Warning,"Sie verwenden einen veralteten Browser. Um die website in vollem Um
 Finish-Email,E-mail,e-mail,e-mail,E-mail
 Finish-Like,Like,Like,Mi piace,Like
 Finish-Restart,Neustart ,Nouvelle partie,Nuova partita,New Game
-Finish-Text,Teilen Sie Ihr Endergebnis von __score__,Partagez votre résultat de __score__,Condivida il suo risultato finale di __score__,Share your score of __score__
+Finish-Text,Teilen Sie Ihr Endergebnis von {{score}},Partagez votre résultat de {{score}},Condivida il suo risultato finale di {{score}},Share your score of {{score}}
 Finish-Tweet,Tweet,Tweet,Tweet,Tweet
 Game-Close,Beenden,Fermer,Chiudere,Close
 Game-Confirm,Bestätige Schätzung,Confirme ton estimation,Confermare,Confirm guess
@@ -27,7 +27,7 @@ Result-From,von der korrekten Position und erhalte,de la position correcte et ob
 Result-Points,Punkte.,points.,punti.,points.
 Result-Score,Letztes Ergebnis,Dernier résultat,Risultato finale,Last round score:
 Result-Total,Total,Total,Totale,Total
-Share-Message,Ich habe __score__ Punkte auf SwissGuesser gemacht! Schaffst du mehr?,J'ai réalisé un total de __score__ points sur SwissGuesser! Es-tu capable de faire mieux?,Ho ottenuto un risultato di __score__ points su SwissGuesser! Riesci a superarmi?,I just scored __score__ playing SwissGuesser! Can you top it?
+Share-Message,Ich habe {{score}} Punkte auf OpenGuesser gemacht! Schaffst du mehr?,J'ai réalisé un total de {{score}} points sur OpenGuesser! Es-tu capable de faire mieux?,Ho ottenuto un risultato di {{score}} points su OpenGuesser! Riesci a superarmi?,I just scored {{score}} playing OpenGuesser! Can you top it?
 Start-Copyright,Copyright und Datenschutzerklärung,Conditions d'utilisation,Copyright e protezione dei diritti d'autore,Copyright and Data protection
 Start-Credit,Umgesetzt mit,Réalisé avec,Realizzato con,Realized with
 Start-Loading,"Bitte warten, laden ...",Veuillez patienter pendant le chargement...,Attendere il caricamento ...,"Please wait, loading ..."
@@ -37,8 +37,8 @@ Aktivdienst der Schweizer Armee <a href=""https://www.swiss-archives.ch/archivpl
 
 Erkennen Sie die Orte, an denen die Soldaten damals ihre Übungen und Manöver abhielten?","Une des plus grandes collections de photographies des <a href=""http://www.bar.admin.ch"">Archives fédérales suisses</a> est celle de la 1ère guerre mondiale: celle-ci comprend 5125 négatifs sur plaques de verre digitalisés concernant le Service Actif de l'armée suisse <a href=""https://www.swiss-archives.ch/archivplansuche.aspx?ID=1439228"">pendant la 1ère guerre mondiale</a>.","La collezione di foto della prima guerra mondiale, una delle più grandi degli <a href=""http://www.bar.admin.ch"">Archivi federali svizzeri</a>, comprende 5125 negativi su supporto di vetro e successivamente digitalizzati. Le foto sono relative al Servizio Attivo dell'esercito svizzero <a href=""https://www.swiss-archives.ch/archivplansuche.aspx?ID=1439228"">durante la prima guerra mondiale</a>.","The photo collection of WW I is one of the largest of the <a href=""http://www.bar.admin.ch"">Swiss Federal Archives</a>. It contains more than 5125 negatives on glass plates which are successively digitized. They document the active service of the Swiss Army <a href=""https://www.swiss-archives.ch/archivplansuche.aspx?ID=1439228"">during the first World War</a>
 Can you guess where the pictures were taken?"
-Start-Title,"SwissGuesser: Fotosammlung
-Erster Weltkrieg",SwissGuesser: collection de photographies de la 1ère guerre mondiale,SwissGuesser: collezione di fotografie della prima guerra mondiale,"SwissGuesser: photo collection from
+Start-Title,"OpenGuesser: Fotosammlung
+Erster Weltkrieg",OpenGuesser: collection de photographies de la 1ère guerre mondiale,OpenGuesser: collezione di fotografie della prima guerra mondiale,"OpenGuesser: photo collection from
 World War I"
 Toggle-Map,Karte,Carte,Mappa,Map
 Toggle-Photo,Foto,Photo,Foto,Photo

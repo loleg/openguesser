@@ -1,16 +1,17 @@
-goog.provide('geoadmin.init');
-
-goog.require('ga.Map');
-goog.require('ga.layer');
-goog.require('ol.View2D');
+// goog.provide('geoadmin.init');
+//
+// goog.require('ga.Map');
+// goog.require('ga.layer');
+// goog.require('ol.View2D');
 
 // Create a GeoAdmin Map
 var map;
+var geoadmin = {};
 geoadmin.init = function() {
   map = new ga.Map({
     // Add GeoAdmin layers
     layers: [
-      ga.layer.create('ch.swisstopo.pixelkarte-farbe')
+      ga.layer.create('ch.swisstopo.pixelkarte-grau')
     ],
     // Define the div where the map is placed
     target: 'map',
@@ -53,4 +54,4 @@ geoadmin.getDistanceGeometric = function(A, B) {
   return pA.distanceTo(pB); // TODO: Unsuppoted in OpenLayers3
 };
 
-goog.exportSymbol('geoadmin.init', geoadmin.init);
+// goog.exportSymbol('geoadmin.init', geoadmin.init);

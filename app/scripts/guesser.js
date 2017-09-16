@@ -1,6 +1,4 @@
-// # SwissGuesser
-//
-// (Story Map 5)
+// # OpenGuesser
 //
 // A game to look for historical pictures on a map.
 
@@ -57,14 +55,13 @@ var guesser = {
 	configure: function(json, l) {
 
 		var self = this;
-		self.config = json.conf;
 
 		// Prepare image collection
 		self.collection = [];
-                // donloadUrl is an absolute Url pointing to where the images are
-                var baseUrl = self.config.downloadUrl || self.config.dataPrefix;
-		$.each(json.data, function() {
-			this.src = baseUrl + this.id + self.config.dataSuffix;
+
+		$.each(json, function() {
+			this.src = this.image;
+			this.DE = this.FR = this.IT = this.EN = this.museumLabel;
 			self.collection.push(this);
 		});
 
@@ -231,7 +228,9 @@ var guesser = {
 
 		// Show start game
 		$('#d-start').modal();
-        $('div.modal-body p').css('padding', '10px')
+    $('div.modal-body p').css('padding', '10px')
+			.parent().find('p:first-child').html('<h5>Hello #GLAMhack-ers!</h5>This is a web game about guessing and learning about geography through images and maps, made with the Swisstopo GeoAdmin maps and Wikidata. Please see the <a href="http://make.opendata.ch/wiki/project:openguesser" target="_blank">wiki page</a> for more information.')
+			.parent().find('p:last-child').hide();
 	},
 
 	// ### Position the map container
@@ -249,9 +248,24 @@ var guesser = {
 		if (map && typeof map.updateSize == 'function') map.updateSize();
 	},
 
+	// ### Converter
+	swissFromLonLat: function(lon, lat) {
+		// Convert to Swiss coordinates
+		return ol.proj.transform(
+			[parseFloat(lon), parseFloat(lat)],
+			'EPSG:4326', 'EPSG:21781');
+	},
+
 	// ### Load image data
 	loader: function(metadata) {
-		if (typeof metadata == 'undefined') return;
+		if (typeof metadata == 'undefined') {
+			console.warn("Metadata unavailable");
+			return;
+		}
+		// console.log(metadata);
+
+		// TODO: Hackidy Hack
+		metadata.id = metadata.museumLabel;
 
 		// Get image data
 		var imgbox = this.domPhotoBox, infobox = this.domPhotoInf;
@@ -268,30 +282,29 @@ var guesser = {
 		$('.total', infobox).html(this.user.score);
 
 		// Result box description
-        //$.support.cors = true;
-        // either a html fragment or an url
-                var msg = metadata[this.lang];
-                if (msg.indexOf('http') == 0) {
-                    $.ajax({
-                        url: msg,
-                         dataType: 'jsonp',
-                        crossDomain: true
-                    }).done(function(data) {
-                      if (metadata.copyright) {
-                        data +='<div>' +  metadata.copyright + '</div>';
-                      }
-                      $('.info p', this.domResults).html(data);
-                 });
-                } else {
-                    var decoded =  $("<div/>").html(msg).text();
-		    $('.info p', this.domResults).html(decoded);
-                }
+    //$.support.cors = true;
+    // either a html fragment or an url
+    // var msg = metadata[this.lang];
+		var msg = "";
+    if (msg.indexOf('http') == 0) {
+        $.ajax({
+            url: msg,
+            dataType: 'jsonp',
+            crossDomain: true
+        }).done(function(data) {
+          $('.info p', this.domResults).html(data);
+     });
+    } else {
+      var decoded =  $("<div/>").html(msg).text();
+			$('.info p', this.domResults).html(decoded);
+    }
 
 		///console.log('Loading image', metadata.id, this.lang);
 
 		// Start the challenge
-		guesser.challenge(map, [metadata.y, metadata.x]);
-
+		var coord = this.swissFromLonLat(metadata.long, metadata.lat);
+		// console.log(coord);
+		guesser.challenge(map, coord);
 	},
 
 	// ### Continue to next image
@@ -436,13 +449,20 @@ var guesser = {
 		$(this.assetcache).each(
 			function() { $('<img/>')[0].src = this; });
 
-		// Load the first image
-		this.loader(this.user.collection[this.currentIndex]);
+		// Load the first image, as soon as we're ready
+		var self = this, ready = false;
+		map.on('postrender', function() {
+			if (ready || ol.proj.transform([7.4480555555556, 46.944166666667], 'EPSG:4326', 'EPSG:21781')[0]<10000) return;
+			ready = true;
 
-		// Clear loader
-		$('#loading').remove();
-		$('.container-main > .hidden').removeClass('hidden');
-		$('.container-main > .hidden').removeClass('hidden');
+			// Let's go
+			self.loader(self.user.collection[self.currentIndex]);
+
+			// Clear loader
+			$('#loading').remove();
+			$('.container-main > .hidden').removeClass('hidden');
+			$('.container-main > .hidden').removeClass('hidden');
+		});
 	},
 
 	// ### Game over
@@ -493,10 +513,10 @@ var guesser = {
 	// ### Populate share box
 	share: function(permalink, histolink) {
 
-		var msg = i18n.t('Share-Message',
+		var msg = i18next.t('Share-Message',
 					{score: guesser.user.score}),
-			txt = i18n.t('Finish-Text',
-					{score: '<b>' + guesser.user.score + '</b>'}),
+			txt = i18next.t('Finish-Text',
+					{score: guesser.user.score}),
 			shb = $('.sharebox');
 
 		// Populate copy link box
@@ -581,7 +601,7 @@ var guesser = {
 		olMap.addOverlay(this.overlay);
 
 		// Bind click event to map
-		olMap.on('singleclick', function(evt) { guesser.place(evt); });
+		olMap.on('click', function(evt) { guesser.place(evt); });
 
 		// Prevent rotation (due to iOS vector bug)
 		map.getView().on('change:rotation', function() {
@@ -611,7 +631,6 @@ var guesser = {
 		// Update placement
 		var element = $(self.overlay.getElement());
 		this.position = evt.coordinate;
-		//console.log(this.position);
 
 		element.css({
 			'background-image': "url('../images/" + (self.currentIndex+1) + ".png')",
@@ -704,7 +723,7 @@ var guesser = {
 		// Generate a comment
 		var comment = (score < 1000) ? "Result-1" :
 		              (score < 2000) ? "Result-2" : "Result-3";
-		this.domResults.find('.comment').html(i18n.t(comment));
+		this.domResults.find('.comment').html(i18next.t(comment));
 
 		// Show dialog and get ready to continue the game
 		this.domResults.removeClass('hidden');
@@ -763,19 +782,22 @@ var guesser = {
 
 	// ### Creates vector feature for a guess
 	getVector: function(label, from, to) {
-		var imageUrl = '../images/' + label + '.png';
+		var imageUrl = '/images/' + label + '.png';
+		// console.log(imageUrl);
 
         var styles = {
             'Point': {
                 'guess': [new ol.style.Style({
                     image: new ol.style.Icon( /** @type {olx.style.IconOptions} */ ({
-                        src: '../images/G.png'
+											src: '/images/G.png',
+                      url: '/images/G.png'
                     }))
                 })],
                 'answer': [
                     new ol.style.Style({
                         image: new ol.style.Icon( /** @type {olx.style.IconOptions} */ ({
-                            src:  imageUrl
+													src:  imageUrl,
+                          url:  imageUrl
                         }))
                     })
                 ]
@@ -832,23 +854,43 @@ var guesser = {
 $('#loading').removeClass('hidden');
 
 // Load translation (i18next)
-i18n.init({
+i18next
+  .use(i18nextXHRBackend)
+  // .use(i18nextBrowserLanguageDetector)
+	.init({
 	  detectLngQS: 'lang',
 	  fallbackLng: 'en',
-	  resGetPath: 'data/locale/__lng__/__ns__.json',
+    debug: true,
+    ns: ['special', 'common'],
+    defaultNS: 'special',
+    backend: {
+			loadPath: 'data/locale/en/translation.json'
+    }
 	  //useLocalStorage: true, localStorageExpirationTime: 86400000
 	}, function(t) {
-		$("*[data-i18n]").i18n();
+		$("*[data-i18n]").localize();
 		// New window all external links
 		$('a[href^="http:"]').attr('target', '_blank');
 	});
 
-$(window).load(function() {
+jqueryI18next.init(i18next, $, {
+  tName: 't', // --> appends $.t = i18next.t
+  i18nName: 'i18n', // --> appends $.i18n = i18next
+  handleName: 'localize', // --> appends $(selector).localize(opts);
+  selectorAttr: 'data-i18n', // selector for translating elements
+  targetAttr: 'i18n-target', // data-() attribute to grab target element to translate (if diffrent then itself)
+  optionsAttr: 'i18n-options', // data-() attribute that contains options, will load/set if useOptionsAttr = true
+  useOptionsAttr: false, // see optionsAttr
+  parseDefaultValueFromContent: true // parses default values from content ele.val or ele.text
+});
+
+$(window).on('load', function() {
 	geoadmin.init(); // Load the map
 
-	$.getJSON('data/base.json', function(d) {
+	// Load the data
+	$.getJSON('data/wikidata_museums_ch.json', function(d) {
 
-		var lang = i18n.detectLanguage();
+		var lang = 'en'; //i18next.detectLanguage(); --> https://github.com/i18next/i18next-browser-languageDetector
 		guesser.configure(d, lang); // Load data
 		guesser.start(); // Start the game
 
