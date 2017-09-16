@@ -1,0 +1,12 @@
+SELECT ?museum ?museumLabel ?museumDescription ?article ?lat ?long ?image WHERE {
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en,de,fr,it". }
+  ?museum (wdt:P31*/wdt:P279*) wd:Q33506.
+  ?museum wdt:P17 wd:Q39.
+  ?museum p:P625 ?statement .
+  ?article schema:about ?museum .
+  ?article schema:isPartOf <https://en.wikipedia.org/>.
+  ?statement psv:P625 ?coordinate_node .
+  ?coordinate_node wikibase:geoLatitude ?lat .
+  ?coordinate_node wikibase:geoLongitude ?long .
+  ?museum wdt:P18 ?image
+}
