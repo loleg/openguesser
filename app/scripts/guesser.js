@@ -66,7 +66,7 @@ var guesser = {
 			this.src = this.image;
 			// Convert to Swiss coordinates
 			this.coords = ol.proj.transform([parseFloat(this.long), parseFloat(this.lat)],
-				'EPSG:4326', 'EPSG:2056');
+				'EPSG:4326', 'EPSG:21781');
 			this.x = this.coords[0];
 			this.y = this.coords[1];
 			this.DE = this.FR = this.IT = this.EN = this.museumLabel;
