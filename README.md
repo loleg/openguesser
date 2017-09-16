@@ -1,11 +1,29 @@
 OpenGuesser
 ===========
 
-This is a web game about guessing and learning about geography with Swisstopo's [GeoAdmin map of Switzerland](https://map.geo.admin.ch) and open data.
+This is a web game about guessing and learning about geography through imagea and maps, made with Swisstopo's [GeoAdmin map of Switzerland](https://map.geo.admin.ch).
+
+After several years of development as a GeoAdmin Storymap, we play tested, forked and started a refresh of the project at the #GLAMhack 2017 event in Lausanne.
+
+We updated all library dependencies but got rid of the old data loading mechanism, with the goal of connecting (later in real time) to open data sources such as Wikidata/Commons. 
+
+A test is being done via the Wikidata Linked Data endpoint (see app/data/*.sparql), notably via datasets tagged 'glam' on Opendata.swiss for creating custom games.
+
+There are a few other improvement ideas already:
+
+- Redesign the frontend to improve aesthetics and usability. 
+- Add a new title and tutorial, complete with loading sequence.
+- Difficulty levels.
+- Multiple guesses.
+- Cooperative play (e.g. ghost traces of a friend's guesses)
+- High scores.
+- Sound f/x!
+
+..and we would be glad to hear more: please raise an Issue if you're so inclined!
 
 # Authors
 
-The following people have worked on this project at some point:
+We thank all the following people have worked on this project at some point:
 
 - TBD
 - ...
@@ -34,10 +52,6 @@ Install dependencies
 For generating documentation, the [Pygments](http://pygments.org/) utility is required, which can be installed as indicated [on the website](http://pygments.org/download/) or on Ubuntu/Debian systems as follows:
 
 `# sudo apt-get install python-pygments`
-
-## Preparing data
-
-TBD
 
 ## Preparing translations
 
