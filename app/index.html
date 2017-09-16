@@ -25,7 +25,7 @@
 	<meta itemprop="image" content="">
 
 	<!-- OpenLayers 3 for GeoAdmin -->
-	<link rel="stylesheet" href="src/build/ol.css" type="text/css">
+	<!-- <link rel="stylesheet" href="src/build/ol.css" type="text/css"> -->
 	<!-- Compiled page styles -->
 	<link rel="stylesheet" href="styles/main.css">
 	<!-- build :js scripts/vendor/modernizr.js
@@ -109,7 +109,7 @@
 			<span class="glyphicon glyphicon-fullscreen"></span>
 		</a>
 	</div>
-	<div class="d-copyright">
+	<div class="d-copyright" style="display:none">
 		&copy;
 		<a href="http://www.swiss-archives.ch" data-i18n="Photo-Copyright"></a>
 	</div>
@@ -204,7 +204,7 @@
 	<div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" href="#d-photobox" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<span data-i18n="Start-Title"></span>
+			<span data-i18n="OpenGuesser-Title">OpenGuesser: Swiss GLAM edition</span>
 		</div>
 		<div class="modal-body">
 			<p data-i18n="[html]Start-Text;"></p>
@@ -246,10 +246,11 @@
 
 <!-- OpenLayers 3 for GeoAdmin -->
 <script>
-	window.CLOSURE_BASE_PATH = './src/';
-	window.CLOSURE_NO_DEPS = true;
+	// window.CLOSURE_BASE_PATH = './src/';
+	// window.CLOSURE_NO_DEPS = true;
 </script>
-<script src="src/build/ol-whitespace.js"></script>
+<!-- <script src="src/build/ol-whitespace.js"></script> -->
+<script src="http://api3.geo.admin.ch/loader.js?lang=en" type="text/javascript"></script>
 
 <!-- build:js scripts/vendor/bootstrap.js -->
 <script src="bower_components/jquery/dist/jquery.js"></script>
@@ -272,7 +273,10 @@
 <script src="bower_components/jquery-i18next/jquery-i18next.js"></script>
 <!-- endbuild -->
 
-<!-- build:js scripts/swissguesser.js -->
+<script src="https://unpkg.com/i18next-xhr-backend/i18nextXHRBackend.js"></script>
+<!-- <script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.js"></script> -->
+
+<!-- build:js scripts/openguesser.js -->
 <script src="scripts/ol3-geoadmin.js"></script>
 <script src="scripts/guesser.js"></script>
 <!-- endbuild -->

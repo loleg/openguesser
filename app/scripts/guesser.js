@@ -1,7 +1,5 @@
 // # OpenGuesser
 //
-// (Based on SwissGuesser, Story Map 5 by geo.admin.ch)
-//
 // A game to look for historical pictures on a map.
 
 // Main closure
@@ -58,17 +56,11 @@ var guesser = {
 
 		var self = this;
 
-		console.log(this);
 		// Prepare image collection
 		self.collection = [];
 
 		$.each(json, function() {
 			this.src = this.image;
-			// Convert to Swiss coordinates
-			this.coords = ol.proj.transform([parseFloat(this.long), parseFloat(this.lat)],
-				'EPSG:4326', 'EPSG:21781');
-			this.x = this.coords[0];
-			this.y = this.coords[1];
 			this.DE = this.FR = this.IT = this.EN = this.museumLabel;
 			self.collection.push(this);
 		});
@@ -256,6 +248,14 @@ var guesser = {
 		if (map && typeof map.updateSize == 'function') map.updateSize();
 	},
 
+	// ### Converter
+	swissFromLonLat: function(lon, lat) {
+		// Convert to Swiss coordinates
+		return ol.proj.transform(
+			[parseFloat(lon), parseFloat(lat)],
+			'EPSG:4326', 'EPSG:21781');
+	},
+
 	// ### Load image data
 	loader: function(metadata) {
 		if (typeof metadata == 'undefined') {
@@ -302,8 +302,9 @@ var guesser = {
 		///console.log('Loading image', metadata.id, this.lang);
 
 		// Start the challenge
-		guesser.challenge(map, [metadata.x, metadata.y]);
-
+		var coord = this.swissFromLonLat(metadata.long, metadata.lat);
+		// console.log(coord);
+		guesser.challenge(map, coord);
 	},
 
 	// ### Continue to next image
@@ -448,13 +449,20 @@ var guesser = {
 		$(this.assetcache).each(
 			function() { $('<img/>')[0].src = this; });
 
-		// Load the first image
-		this.loader(this.user.collection[this.currentIndex]);
+		// Load the first image, as soon as we're ready
+		var self = this, ready = false;
+		map.on('postrender', function() {
+			if (ready || ol.proj.transform([7.4480555555556, 46.944166666667], 'EPSG:4326', 'EPSG:21781')[0]<10000) return;
+			ready = true;
 
-		// Clear loader
-		$('#loading').remove();
-		$('.container-main > .hidden').removeClass('hidden');
-		$('.container-main > .hidden').removeClass('hidden');
+			// Let's go
+			self.loader(self.user.collection[self.currentIndex]);
+
+			// Clear loader
+			$('#loading').remove();
+			$('.container-main > .hidden').removeClass('hidden');
+			$('.container-main > .hidden').removeClass('hidden');
+		});
 	},
 
 	// ### Game over
@@ -508,7 +516,7 @@ var guesser = {
 		var msg = i18next.t('Share-Message',
 					{score: guesser.user.score}),
 			txt = i18next.t('Finish-Text',
-					{score: '<b>' + guesser.user.score + '</b>'}),
+					{score: guesser.user.score}),
 			shb = $('.sharebox');
 
 		// Populate copy link box
@@ -622,8 +630,7 @@ var guesser = {
 
 		// Update placement
 		var element = $(self.overlay.getElement());
-		this.position = evt.coordinate_;
-		// console.log(this.position);
+		this.position = evt.coordinate;
 
 		element.css({
 			'background-image': "url('../images/" + (self.currentIndex+1) + ".png')",
@@ -847,10 +854,18 @@ var guesser = {
 $('#loading').removeClass('hidden');
 
 // Load translation (i18next)
-i18next.init({
+i18next
+  .use(i18nextXHRBackend)
+  // .use(i18nextBrowserLanguageDetector)
+	.init({
 	  detectLngQS: 'lang',
 	  fallbackLng: 'en',
-	  resGetPath: 'data/locale/__lng__/__ns__.json',
+    debug: true,
+    ns: ['special', 'common'],
+    defaultNS: 'special',
+    backend: {
+			loadPath: 'data/locale/en/translation.json'
+    }
 	  //useLocalStorage: true, localStorageExpirationTime: 86400000
 	}, function(t) {
 		$("*[data-i18n]").localize();
@@ -872,6 +887,7 @@ jqueryI18next.init(i18next, $, {
 $(window).on('load', function() {
 	geoadmin.init(); // Load the map
 
+	// Load the data
 	$.getJSON('data/wikidata_museums_ch.json', function(d) {
 
 		var lang = 'en'; //i18next.detectLanguage(); --> https://github.com/i18next/i18next-browser-languageDetector

@@ -6,7 +6,10 @@
 @swissblue: #0081c2;
 @swissgrey: #555;
 
-body { background: #fff; overflow: hidden; }
+body {
+  background: #fff url(/images/carton1_256x256.jpg);
+  overflow: hidden;
+}
 
 .browsehappy {
   margin: 0px; padding: 1em;
@@ -31,7 +34,12 @@ body { background: #fff; overflow: hidden; }
 
 #column-map { height:100%; }
 #column-map, #d-photobox { padding:0; z-index:2; }
-#row-info { background: #fff; text-align: center; z-index:1; }
+#row-info {
+  background: #fff; text-align: center; z-index:1;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  padding: 10px 5px 10px 5px;
+}
 
 .navbar-toggle .icon-bar { background-color: #777; }
 .navbar-toggle { background-color: #ddd; }
@@ -116,9 +124,9 @@ body { background: #fff; overflow: hidden; }
 	.navServiceBackground {
 		height: 20px;
 		line-height: 18px;
-		background-color: #ccc;
-		border-top: 1px solid white;
-		border-bottom: 1px solid black;
+		// background-color: #ccc;
+		// border-top: 1px solid white;
+		// border-bottom: 1px solid black;
 		padding-right: 5px;
 		padding-left: 2px;
 		font-size: .75em;
@@ -498,9 +506,11 @@ body.modal-open, .modal-open .navbar-fixed-top {
 
 	#v-finish {
 		padding: 0.5em 0;
-		border-top: 1px solid #dd9;
 
-		.message { text-align: center; }
+		.message {
+      font-weight: bold;
+      text-align: center;
+    }
 
 		.sharebox {
 			margin: 1em;
@@ -587,6 +597,17 @@ body.modal-open, .modal-open .navbar-fixed-top {
 			padding: 0.5em 0 0;
 			margin: 0;
 			left: 1%;
+
+      // OpenGuesser logo
+      font-family: monospace;
+      font-size: 59pt;
+      margin-left: -4em;
+      margin-top: 49px;
+      color: white;
+      background: black;
+      transform: rotate3d(1, 1,0.1,28deg);
+      padding: 3pt;
+      text-shadow: 3px -3px 1px black;
 		}
 		.navbar-toggle { right: -38px; }
 		.navbar-collapse {
