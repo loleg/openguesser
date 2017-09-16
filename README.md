@@ -3,13 +3,13 @@ OpenGuesser
 
 This is a web game about guessing and learning about geography through imagea and maps, made with Swisstopo's [GeoAdmin map of Switzerland](https://map.geo.admin.ch).
 
-After several years of development as a GeoAdmin Storymap, we play tested, forked and started a refresh of the project at the #GLAMhack 2017 event in Lausanne.
+After several years of development as a series of GeoAdmin Storymaps - try the original [SwissGuesser game here](http://mf-swissguesser.prod.bgdi.ch/main/storymaps/storymap5/) - we play tested, forked and started a refresh of the project at [#GLAMhack 2017](http://make.opendata.ch/wiki/event:2017-09).
 
 We updated all library dependencies but got rid of the old data loading mechanism, with the goal of connecting (later in real time) to open data sources such as Wikidata/Commons. 
 
 A test is being done via the Wikidata Linked Data endpoint (see app/data/*.sparql), notably via datasets tagged 'glam' on Opendata.swiss for creating custom games.
 
-There are a few other improvement ideas already:
+There are a few other improvement ideas in mind already:
 
 - Redesign the frontend to improve aesthetics and usability. 
 - Add a new title and tutorial, complete with loading sequence.
@@ -19,14 +19,11 @@ There are a few other improvement ideas already:
 - High scores.
 - Sound f/x!
 
-..and we would be glad to hear more: please raise an Issue if you're so inclined!
+..and we would be glad to see more ideas and any contributions: please raise an Issue or PR if you're so inclined!
 
 # Authors
 
-We thank all the following people have worked on this project at some point:
-
-- TBD
-- ...
+A number of people have worked on this project at some point. Please see contributors of the original project in [geoadmin/mf-swissguesser](https://github.com/geoadmin/mf-swissguesser/graphs/contributors)
 
 # Installation
 
