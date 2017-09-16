@@ -229,7 +229,6 @@ var guesser = {
 		// Show start game
 		$('#d-start').modal();
     $('div.modal-body p').css('padding', '10px')
-			.parent().find('p:first-child').html('<h5>Hello #GLAMhack-ers!</h5>This is a web game about guessing and learning about geography through images and maps, made with the Swisstopo GeoAdmin maps and Wikidata. Please see the <a href="http://make.opendata.ch/wiki/project:openguesser" target="_blank">wiki page</a> for more information.')
 			.parent().find('p:last-child').hide();
 	},
 
